@@ -1,0 +1,19 @@
+package com.localbasket.service;
+
+import java.util.List;
+
+import com.localbasket.entity.Address;
+
+public interface AddressService {
+
+    Address addAddress(Address address);
+
+    List<Address> getAllAddresses();
+
+    Address getAddressById(Long id);
+
+    Address updateAddress(Long id, Address address);
+
+    void deleteAddress(Long id);
+
+}
