@@ -1,6 +1,7 @@
 package com.localbasket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "categories")
@@ -10,6 +11,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Category name is required")
     @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName;
 
@@ -24,7 +26,8 @@ public class Category {
     public Category() {
     }
 
-    public Category(Long id, String categoryName, String description, String imageUrl, String status) {
+    public Category(Long id, String categoryName, String description,
+                    String imageUrl, String status) {
         this.id = id;
         this.categoryName = categoryName;
         this.description = description;

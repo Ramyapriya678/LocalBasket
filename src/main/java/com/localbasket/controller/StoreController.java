@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.entity.Store;
 import com.localbasket.service.StoreService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/stores")
 public class StoreController {
@@ -16,7 +18,7 @@ public class StoreController {
     private StoreService storeService;
 
     @PostMapping
-    public Store addStore(@RequestBody Store store) {
+    public Store addStore(@Valid @RequestBody Store store) {
         return storeService.addStore(store);
     }
 
@@ -32,7 +34,7 @@ public class StoreController {
 
     @PutMapping("/{id}")
     public Store updateStore(@PathVariable Long id,
-                             @RequestBody Store store) {
+                             @Valid @RequestBody Store store) {
         return storeService.updateStore(id, store);
     }
 
@@ -41,5 +43,4 @@ public class StoreController {
         storeService.deleteStore(id);
         return "Store deleted successfully.";
     }
-
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.dto.ReviewRequestDTO;
 import com.localbasket.dto.ReviewResponseDTO;
 import com.localbasket.service.ReviewService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -18,7 +19,7 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @PostMapping
-    public ReviewResponseDTO createReview(@RequestBody ReviewRequestDTO request) {
+    public ReviewResponseDTO createReview(@Valid @RequestBody ReviewRequestDTO request) {
         return reviewService.createReview(request);
     }
 
@@ -50,7 +51,7 @@ public class ReviewController {
     @PutMapping("/{id}")
     public ReviewResponseDTO updateReview(
             @PathVariable Long id,
-            @RequestBody ReviewRequestDTO request) {
+            @Valid @RequestBody ReviewRequestDTO request) {
 
         return reviewService.updateReview(id, request);
     }

@@ -12,6 +12,7 @@ import com.localbasket.dto.PaymentRequestDTO;
 import com.localbasket.dto.PaymentResponseDTO;
 import com.localbasket.entity.Order;
 import com.localbasket.entity.Payment;
+import com.localbasket.enums.PaymentMethod;
 import com.localbasket.enums.PaymentStatus;
 import com.localbasket.repository.OrderRepository;
 import com.localbasket.repository.PaymentRepository;
@@ -29,23 +30,39 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentResponseDTO createPayment(PaymentRequestDTO request) {
 
+        // Find Order
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        // Check if payment already exists
         if (paymentRepository.findByOrderId(order.getId()).isPresent()) {
             throw new RuntimeException("Payment already exists for this order");
         }
 
         Payment payment = new Payment();
-        payment.setOrder(order);
-        payment.setPaymentMethod(request.getPaymentMethod());
-        payment.setAmount(request.getAmount());
 
-        if (request.getPaymentMethod().name().equals("COD")) {
+        payment.setOrder(order);
+
+        payment.setPaymentMethod(request.getPaymentMethod());
+
+        // Always take amount from Order
+        payment.setAmount(
+                java.math.BigDecimal.valueOf(order.getTotalAmount())
+        );
+
+        // COD Payment
+        if (request.getPaymentMethod() == PaymentMethod.COD) {
+
             payment.setPaymentStatus(PaymentStatus.PENDING);
+
         } else {
+
             payment.setPaymentStatus(PaymentStatus.SUCCESS);
-            payment.setTransactionId(UUID.randomUUID().toString());
+
+            payment.setTransactionId(
+                    UUID.randomUUID().toString()
+            );
+
             payment.setPaidAt(LocalDateTime.now());
         }
 
@@ -87,12 +104,19 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        PaymentStatus paymentStatus = PaymentStatus.valueOf(status.toUpperCase());
+        PaymentStatus paymentStatus =
+                PaymentStatus.valueOf(status.toUpperCase());
 
         payment.setPaymentStatus(paymentStatus);
 
-        if (paymentStatus == PaymentStatus.SUCCESS && payment.getPaidAt() == null) {
+        if (paymentStatus == PaymentStatus.SUCCESS
+                && payment.getPaidAt() == null) {
+
             payment.setPaidAt(LocalDateTime.now());
+
+            if (payment.getTransactionId() == null) {
+                payment.setTransactionId(UUID.randomUUID().toString());
+            }
         }
 
         Payment updatedPayment = paymentRepository.save(payment);

@@ -1,10 +1,14 @@
 package com.localbasket.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "carts")
@@ -14,15 +18,19 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "User is required")
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new ArrayList<>();
 
-    private Double totalAmount;
+    @DecimalMin(value = "0.0", inclusive = true,
+            message = "Total amount cannot be negative")
+    private @DecimalMin(value = "0.0", inclusive = true, message = "Total amount cannot be negative") BigDecimal totalAmount;
 
     public Cart() {
     }
@@ -51,11 +59,11 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
-    public Double getTotalAmount() {
+    public @DecimalMin(value = "0.0", inclusive = true, message = "Total amount cannot be negative") BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(@DecimalMin(value = "0.0", inclusive = true, message = "Total amount cannot be negative") @DecimalMin(value = "0.0", inclusive = true, message = "Total amount cannot be negative") BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 }

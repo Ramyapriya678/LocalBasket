@@ -1,8 +1,13 @@
 package com.localbasket.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class WishlistRequestDTO {
 
+    @NotNull(message = "User ID is required")
     private Long userId;
+
+    @NotNull(message = "Store Product ID is required")
     private Long storeProductId;
 
     public WishlistRequestDTO() {

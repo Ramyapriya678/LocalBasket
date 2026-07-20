@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.entity.Product;
 import com.localbasket.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -17,7 +19,7 @@ public class ProductController {
 
     // Add Product
     @PostMapping
-    public Product addProduct(@RequestBody Product product) {
+    public Product addProduct(@Valid @RequestBody Product product) {
         return productService.addProduct(product);
     }
 
@@ -36,7 +38,7 @@ public class ProductController {
     // Update Product
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable Long id,
-                                 @RequestBody Product product) {
+                                 @Valid @RequestBody Product product) {
         return productService.updateProduct(id, product);
     }
 

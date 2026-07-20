@@ -1,5 +1,5 @@
 package com.localbasket.entity;
-
+import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -20,13 +20,14 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_product_id", nullable = false)
-    @JsonIgnore
-    private Inventory inventory;
+    private StoreProduct storeProduct;
 
     private Integer quantity;
 
-    private Double price;
+    private BigDecimal price;
 
+    private BigDecimal subtotal;
+    
     public CartItem() {
     }
 
@@ -45,15 +46,14 @@ public class CartItem {
     public void setCart(Cart cart) {
         this.cart = cart;
     }
-
-    public Inventory getInventory() {
-        return inventory;
+    public StoreProduct getStoreProduct() {
+        return storeProduct;
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public void setStoreProduct(StoreProduct storeProduct) {
+        this.storeProduct = storeProduct;
     }
-
+  
     public Integer getQuantity() {
         return quantity;
     }
@@ -62,11 +62,20 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
     }
 }

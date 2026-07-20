@@ -1,9 +1,12 @@
 package com.localbasket.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -14,23 +17,37 @@ public class User {
     private Long id;
 
 
+    @NotBlank(message = "First name is required")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
 
+    @NotBlank(message = "Last name is required")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email address")
     @Column(nullable = false, unique = true)
     private String email;
 
 
+    @NotBlank(message = "Phone number is required")
+    @Pattern(
+            regexp = "^[0-9]{10}$",
+            message = "Phone number must contain exactly 10 digits"
+    )
     @Column(nullable = false)
     private String phone;
 
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotBlank(message = "Password is required")
+    @Size(
+            min = 6,
+            message = "Password must contain minimum 6 characters"
+    )
     @Column(nullable = false)
     private String password;
 
@@ -63,7 +80,6 @@ public class User {
 
 
     // Getters and Setters
-
 
     public Long getId() {
         return id;

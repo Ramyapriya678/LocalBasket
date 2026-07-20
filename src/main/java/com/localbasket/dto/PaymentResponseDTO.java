@@ -11,9 +11,9 @@ public class PaymentResponseDTO {
     private Long id;
     private Long orderId;
     private PaymentMethod paymentMethod;
-    private String transactionId;
     private BigDecimal amount;
     private PaymentStatus paymentStatus;
+    private String transactionId;
     private LocalDateTime paidAt;
     private LocalDateTime createdAt;
 
@@ -44,14 +44,6 @@ public class PaymentResponseDTO {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public BigDecimal getAmount() {
         return amount;
     }
@@ -66,6 +58,14 @@ public class PaymentResponseDTO {
 
     public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public LocalDateTime getPaidAt() {

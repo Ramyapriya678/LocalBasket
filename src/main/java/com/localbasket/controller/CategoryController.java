@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.entity.Category;
 import com.localbasket.service.CategoryService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -17,7 +19,7 @@ public class CategoryController {
 
     // Add Category
     @PostMapping
-    public Category addCategory(@RequestBody Category category) {
+    public Category addCategory(@Valid @RequestBody Category category) {
         return categoryService.addCategory(category);
     }
 
@@ -36,7 +38,7 @@ public class CategoryController {
     // Update Category
     @PutMapping("/{id}")
     public Category updateCategory(@PathVariable Long id,
-                                   @RequestBody Category category) {
+                                   @Valid @RequestBody Category category) {
         return categoryService.updateCategory(id, category);
     }
 

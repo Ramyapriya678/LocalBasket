@@ -1,7 +1,6 @@
 package com.localbasket.service;
 
 import com.localbasket.dto.LoginRequest;
-import com.localbasket.dto.LoginResponse;
 import com.localbasket.entity.User;
 
 public interface UserService {
@@ -10,5 +9,5 @@ public interface UserService {
     User registerUser(User user);
 
     // Login existing user
-    LoginResponse login(LoginRequest request);
+    User login(LoginRequest request);
 }

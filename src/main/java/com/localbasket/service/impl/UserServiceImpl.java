@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.localbasket.dto.LoginRequest;
-import com.localbasket.dto.LoginResponse;
 import com.localbasket.entity.Role;
 import com.localbasket.entity.User;
 import com.localbasket.repository.RoleRepository;
@@ -26,6 +25,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     @Override
     public User registerUser(User user) {
 
@@ -39,8 +39,10 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Phone number already exists.");
         }
 
+
         // Encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
 
         // Assign CUSTOMER role automatically
         Role role = roleRepository.findByName("CUSTOMER")
@@ -48,24 +50,35 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(role);
 
+
         return userRepository.save(user);
     }
 
-    @Override
-    public LoginResponse login(LoginRequest request) {
 
-        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+    @Override
+    public User login(LoginRequest request) {
+
+        Optional<User> optionalUser =
+                userRepository.findByEmail(request.getEmail());
+
 
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("User not found");
         }
 
+
         User user = optionalUser.get();
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
             throw new RuntimeException("Invalid password");
         }
 
-        return new LoginResponse("Login Successful");
+
+        return user;
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.entity.Address;
 import com.localbasket.service.AddressService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/addresses")
 public class AddressController {
@@ -15,11 +17,13 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+
     // Add Address
     @PostMapping
-    public Address addAddress(@RequestBody Address address) {
+    public Address addAddress(@Valid @RequestBody Address address) {
         return addressService.addAddress(address);
     }
+
 
     // Get All Addresses
     @GetMapping
@@ -27,18 +31,21 @@ public class AddressController {
         return addressService.getAllAddresses();
     }
 
+
     // Get Address By ID
     @GetMapping("/{id}")
     public Address getAddressById(@PathVariable Long id) {
         return addressService.getAddressById(id);
     }
 
+
     // Update Address
     @PutMapping("/{id}")
     public Address updateAddress(@PathVariable Long id,
-                                 @RequestBody Address address) {
+                                 @Valid @RequestBody Address address) {
         return addressService.updateAddress(id, address);
     }
+
 
     // Delete Address
     @DeleteMapping("/{id}")

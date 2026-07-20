@@ -8,6 +8,11 @@ import com.localbasket.entity.CartItem;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
-    Optional<CartItem> findByCartIdAndInventoryId(Long cartId, Long inventoryId);
-
+	Optional<CartItem> findByCartIdAndStoreProductId(
+	        Long cartId,
+	        Long storeProductId
+	);
+	
+	
+	
 }

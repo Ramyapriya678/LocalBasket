@@ -1,8 +1,11 @@
 package com.localbasket.entity;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "order_items")
@@ -13,67 +16,72 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     @JsonBackReference
     private Order order;
 
+    @NotNull(message = "Store Product is required")
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "store_product_id", nullable = false)
+    private StoreProduct storeProduct;
 
+    @NotNull(message = "Quantity is required")
     private Integer quantity;
 
+    @NotNull(message = "Price is required")
     private Double price;
 
-    public OrderItem() {
-    }
+    @NotNull(message = "Subtotal is required")
+    private BigDecimal subtotal;
 
-    public OrderItem(Long id, Order order, Product product,
-                     Integer quantity, Double price) {
-        this.id = id;
-        this.order = order;
-        this.product = product;
-        this.quantity = quantity;
-        this.price = price;
+    public OrderItem() {
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
+    public StoreProduct getStoreProduct() {
+        return storeProduct;
     }
 
     public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
     public Double getPrice() {
         return price;
     }
 
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void setStoreProduct(StoreProduct storeProduct) {
+        this.storeProduct = storeProduct;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.dto.WishlistRequestDTO;
 import com.localbasket.dto.WishlistResponseDTO;
 import com.localbasket.service.WishlistService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/wishlists")
@@ -18,7 +19,7 @@ public class WishlistController {
     private WishlistService wishlistService;
 
     @PostMapping
-    public WishlistResponseDTO addToWishlist(@RequestBody WishlistRequestDTO request) {
+    public WishlistResponseDTO addToWishlist(@Valid @RequestBody WishlistRequestDTO request) {
         return wishlistService.addToWishlist(request);
     }
 

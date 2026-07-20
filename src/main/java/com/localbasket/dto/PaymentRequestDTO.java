@@ -1,14 +1,16 @@
 package com.localbasket.dto;
 
-import java.math.BigDecimal;
-
 import com.localbasket.enums.PaymentMethod;
+
+import jakarta.validation.constraints.NotNull;
 
 public class PaymentRequestDTO {
 
+    @NotNull(message = "Order ID is required")
     private Long orderId;
+
+    @NotNull(message = "Payment Method is required")
     private PaymentMethod paymentMethod;
-    private BigDecimal amount;
 
     public PaymentRequestDTO() {
     }
@@ -27,13 +29,5 @@ public class PaymentRequestDTO {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
     }
 }

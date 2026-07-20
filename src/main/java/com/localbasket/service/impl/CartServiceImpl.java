@@ -1,5 +1,6 @@
 package com.localbasket.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,16 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.localbasket.entity.Cart;
 import com.localbasket.entity.CartItem;
-import com.localbasket.entity.Inventory;
+import com.localbasket.entity.StoreProduct;
 import com.localbasket.entity.User;
 import com.localbasket.repository.CartItemRepository;
 import com.localbasket.repository.CartRepository;
-import com.localbasket.repository.InventoryRepository;
+import com.localbasket.repository.StoreProductRepository;
 import com.localbasket.repository.UserRepository;
 import com.localbasket.service.CartService;
 
 @Service
 public class CartServiceImpl implements CartService {
+
 
     @Autowired
     private CartRepository cartRepository;
@@ -28,115 +30,255 @@ public class CartServiceImpl implements CartService {
     private UserRepository userRepository;
 
     @Autowired
-    private InventoryRepository inventoryRepository;
+    private StoreProductRepository storeProductRepository;
+
+
 
     @Override
-    public Cart addToCart(Long userId, Long productId, Integer quantity) {
+    public Cart addToCart(Long userId, Long storeProductId, Integer quantity) {
 
+
+        // Find User
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Inventory inventory = inventoryRepository.findByProductId(productId)
-                .orElseThrow(() -> new RuntimeException("Inventory not found"));
 
+
+        // Find Store Product
+        StoreProduct storeProduct = storeProductRepository.findById(storeProductId)
+                .orElseThrow(() -> new RuntimeException("Store product not found"));
+
+
+
+        // Find existing cart
         Cart cart = cartRepository.findByUserId(userId);
 
+
+
+        // Create cart if not exists
         if (cart == null) {
+
             cart = new Cart();
+
             cart.setUser(user);
+
             cart.setCartItems(new ArrayList<>());
-            cart.setTotalAmount(0.0);
+
+            cart.setTotalAmount(BigDecimal.ZERO);
+
             cart = cartRepository.save(cart);
         }
 
+
+
+        // Check item already exists
         CartItem item = cartItemRepository
-                .findByCartIdAndInventoryId(cart.getId(), inventory.getId())
+                .findByCartIdAndStoreProductId(
+                        cart.getId(),
+                        storeProductId
+                )
                 .orElse(null);
+
+
 
         if (item == null) {
 
+
+            // New cart item
             item = new CartItem();
+
             item.setCart(cart);
-            item.setInventory(inventory);
+
+            item.setStoreProduct(storeProduct);
+
             item.setQuantity(quantity);
-            item.setPrice(inventory.getPrice());
+
+
+            item.setPrice(
+                    storeProduct.getSellingPrice()
+            );
+
+
+            item.setSubtotal(
+                    storeProduct.getSellingPrice()
+                    .multiply(BigDecimal.valueOf(quantity))
+            );
+
 
             cart.getCartItems().add(item);
 
+
+
         } else {
 
-            item.setQuantity(item.getQuantity() + quantity);
+
+            // Increase quantity
+
+            item.setQuantity(
+                    item.getQuantity() + quantity
+            );
+
+
+            item.setSubtotal(
+                    item.getPrice()
+                    .multiply(BigDecimal.valueOf(item.getQuantity()))
+            );
 
         }
+
+
 
         cartItemRepository.save(item);
 
-        double total = 0.0;
 
-        for (CartItem cartItem : cart.getCartItems()) {
-            total += cartItem.getPrice() * cartItem.getQuantity();
+
+        // Calculate Cart Total
+
+        BigDecimal total = BigDecimal.ZERO;
+
+
+        for(CartItem cartItem : cart.getCartItems()) {
+
+            total = total.add(
+                    cartItem.getSubtotal()
+            );
+
         }
+
+
 
         cart.setTotalAmount(total);
 
+
+
         return cartRepository.save(cart);
+
     }
+
+
+
 
     @Override
     public Cart getCartByUser(Long userId) {
 
+
         Cart cart = cartRepository.findByUserId(userId);
 
-        if (cart == null) {
+
+        if(cart == null) {
+
             throw new RuntimeException("Cart not found");
+
         }
 
+
         return cart;
+
     }
+
+
+
+
 
     @Override
     public Cart updateCartItem(Long cartItemId, Integer quantity) {
 
+
         CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+                .orElseThrow(
+                        () -> new RuntimeException("Cart item not found")
+                );
+
+
 
         item.setQuantity(quantity);
 
+
+
+        item.setSubtotal(
+                item.getPrice()
+                .multiply(BigDecimal.valueOf(quantity))
+        );
+
+
+
         cartItemRepository.save(item);
+
+
 
         Cart cart = item.getCart();
 
-        double total = 0.0;
 
-        for (CartItem cartItem : cart.getCartItems()) {
-            total += cartItem.getPrice() * cartItem.getQuantity();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+
+
+        for(CartItem cartItem : cart.getCartItems()) {
+
+            total = total.add(
+                    cartItem.getSubtotal()
+            );
+
         }
+
+
 
         cart.setTotalAmount(total);
 
+
+
         return cartRepository.save(cart);
+
     }
+
+
+
+
 
     @Override
     public void removeCartItem(Long cartItemId) {
 
+
         CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+                .orElseThrow(
+                        () -> new RuntimeException("Cart item not found")
+                );
+
+
 
         Cart cart = item.getCart();
 
+
+
         cart.getCartItems().remove(item);
+
+
 
         cartItemRepository.delete(item);
 
-        double total = 0.0;
 
-        for (CartItem cartItem : cart.getCartItems()) {
-            total += cartItem.getPrice() * cartItem.getQuantity();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+
+
+        for(CartItem cartItem : cart.getCartItems()) {
+
+            total = total.add(
+                    cartItem.getSubtotal()
+            );
+
         }
+
+
 
         cart.setTotalAmount(total);
 
+
+
         cartRepository.save(cart);
+
     }
+
 }
