@@ -42,7 +42,8 @@ public class AuthController {
 
         return new LoginResponse(
                 "Login Successful",
-                token
+                token,
+                user.getId()
         );
 
     }
