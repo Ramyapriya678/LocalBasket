@@ -8,6 +8,8 @@ public class LoginResponse {
 
     private Long userId;
 
+    private String role;
+
 
     public LoginResponse() {
     }
@@ -16,11 +18,13 @@ public class LoginResponse {
     public LoginResponse(
             String message,
             String token,
-            Long userId
+            Long userId,
+            String role
     ) {
         this.message = message;
         this.token = token;
         this.userId = userId;
+        this.role = role;
     }
 
 
@@ -51,6 +55,16 @@ public class LoginResponse {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

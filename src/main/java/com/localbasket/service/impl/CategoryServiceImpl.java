@@ -39,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found."));
     }
+    
 
     @Override
     public Category updateCategory(Long id, Category category) {
@@ -48,18 +49,36 @@ public class CategoryServiceImpl implements CategoryService {
 
         existingCategory.setCategoryName(category.getCategoryName());
         existingCategory.setDescription(category.getDescription());
-        existingCategory.setImageUrl(category.getImageUrl());
-        existingCategory.setStatus(category.getStatus());
+
+        if (category.getImageUrl() != null) {
+            existingCategory.setImageUrl(category.getImageUrl());
+        }
+
+        if (category.getStatus() != null) {
+            existingCategory.setStatus(category.getStatus());
+        }
 
         return categoryRepository.save(existingCategory);
     }
-
     @Override
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found."));
 
-        categoryRepository.delete(category);
+        try {
+
+            categoryRepository.delete(category);
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                "Cannot delete category because products are assigned to it."
+            );
+
+        }
+
     }
+
+   
 }

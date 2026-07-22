@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "addresses")
 public class Address {
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +58,12 @@ public class Address {
 
 
     public Address() {
+    }
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
     }
 
 

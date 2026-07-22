@@ -8,7 +8,7 @@ public interface AddressService {
 
     Address addAddress(Address address);
 
-    List<Address> getAllAddresses();
+    List<Address> getAddressesByUser(Long userId);
 
     Address getAddressById(Long id);
 

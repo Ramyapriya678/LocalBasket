@@ -25,8 +25,10 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
+    public List<Address> getAddressesByUser(Long userId) {
+
+        return addressRepository.findByUserId(userId);
+
     }
 
     @Override

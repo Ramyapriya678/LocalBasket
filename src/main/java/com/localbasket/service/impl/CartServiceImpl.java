@@ -167,7 +167,23 @@ public class CartServiceImpl implements CartService {
 
         if(cart == null) {
 
-            throw new RuntimeException("Cart not found");
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(
+                        () -> new RuntimeException("User not found")
+                    );
+
+
+            cart = new Cart();
+
+            cart.setUser(user);
+
+            cart.setCartItems(new ArrayList<>());
+
+            cart.setTotalAmount(BigDecimal.ZERO);
+
+
+            cart = cartRepository.save(cart);
 
         }
 
@@ -175,7 +191,6 @@ public class CartServiceImpl implements CartService {
         return cart;
 
     }
-
 
 
 

@@ -1,4 +1,5 @@
 package com.localbasket.entity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,14 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    
+    
+    @OneToOne(mappedBy = "order")
+    @JsonIgnoreProperties("order")
+    private Delivery delivery;
+    
+    
     @NotNull(message = "User is required")
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -54,6 +62,13 @@ public class Order {
 
     public Long getId() {
         return id;
+    }
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 
     public void setId(Long id) {

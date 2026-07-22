@@ -29,9 +29,12 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Autowired
     private DeliveryPartnerRepository deliveryPartnerRepository;
-
     @Override
     public DeliveryResponseDTO assignDelivery(DeliveryRequestDTO request) {
+
+        // Debug
+        System.out.println("Order ID: " + request.getOrderId());
+        System.out.println("Partner ID: " + request.getDeliveryPartnerId());
 
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -39,6 +42,10 @@ public class DeliveryServiceImpl implements DeliveryService {
         DeliveryPartner partner = deliveryPartnerRepository
                 .findById(request.getDeliveryPartnerId())
                 .orElseThrow(() -> new RuntimeException("Delivery Partner not found"));
+
+        // Debug
+        System.out.println("Order Found: " + order.getId());
+        System.out.println("Partner Found: " + partner.getId());
 
         if (deliveryRepository.findByOrderId(order.getId()).isPresent()) {
             throw new RuntimeException("Delivery already assigned for this order");
@@ -51,10 +58,16 @@ public class DeliveryServiceImpl implements DeliveryService {
         delivery.setStatus(DeliveryStatus.ASSIGNED);
         delivery.setAssignedAt(LocalDateTime.now());
 
+        // Debug
+        System.out.println("Saving delivery...");
+
         Delivery saved = deliveryRepository.save(delivery);
+
+        System.out.println("Delivery Saved Successfully");
 
         return mapToDTO(saved);
     }
+
 
     @Override
     public DeliveryResponseDTO getDeliveryById(Long id) {
@@ -92,30 +105,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public DeliveryResponseDTO updateDeliveryStatus(Long id, String status) {
-
-        Delivery delivery = deliveryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Delivery not found"));
-
-        DeliveryStatus deliveryStatus =
-                DeliveryStatus.valueOf(status.toUpperCase());
-
-        delivery.setStatus(deliveryStatus);
-
-        if (deliveryStatus == DeliveryStatus.PICKED_UP) {
-            delivery.setPickedUpAt(LocalDateTime.now());
-        }
-
-        if (deliveryStatus == DeliveryStatus.DELIVERED) {
-            delivery.setDeliveredAt(LocalDateTime.now());
-        }
-
-        Delivery updated = deliveryRepository.save(delivery);
-
-        return mapToDTO(updated);
-    }
-
+   
     @Override
     public DeliveryResponseDTO updateLocation(
             Long id,
@@ -132,7 +122,69 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         return mapToDTO(updated);
     }
+    @Override
+    public DeliveryResponseDTO updateDeliveryStatus(Long id, String status) {
 
+
+        Delivery delivery =
+                deliveryRepository.findById(id)
+                .orElseThrow(() ->
+                new RuntimeException("Delivery not found"));
+
+
+        DeliveryStatus deliveryStatus =
+                DeliveryStatus.valueOf(
+                        status.toUpperCase()
+                );
+
+
+        delivery.setStatus(deliveryStatus);
+
+
+
+        if(deliveryStatus == DeliveryStatus.PICKED_UP) {
+
+            delivery.setPickedUpAt(
+                    LocalDateTime.now()
+            );
+
+
+            // Update Order Status
+            delivery.getOrder()
+            .setStatus("OUT_FOR_DELIVERY");
+
+        }
+
+
+
+        if(deliveryStatus == DeliveryStatus.DELIVERED) {
+
+            delivery.setDeliveredAt(
+                    LocalDateTime.now()
+            );
+
+
+            // Update Order Status
+            delivery.getOrder()
+            .setStatus("DELIVERED");
+
+        }
+
+
+
+        // save order changes
+        orderRepository.save(
+                delivery.getOrder()
+        );
+
+
+        Delivery updated =
+                deliveryRepository.save(delivery);
+
+
+        return mapToDTO(updated);
+
+    }
     @Override
     public void deleteDelivery(Long id) {
 

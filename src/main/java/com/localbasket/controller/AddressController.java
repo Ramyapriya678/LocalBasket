@@ -20,37 +20,49 @@ public class AddressController {
 
     // Add Address
     @PostMapping
-    public Address addAddress(@Valid @RequestBody Address address) {
+    public Address addAddress(
+            @Valid @RequestBody Address address) {
+
         return addressService.addAddress(address);
     }
 
 
-    // Get All Addresses
-    @GetMapping
-    public List<Address> getAllAddresses() {
-        return addressService.getAllAddresses();
+    // Get Addresses By User
+    @GetMapping("/user/{userId}")
+    public List<Address> getUserAddresses(
+            @PathVariable Long userId) {
+
+        return addressService.getAddressesByUser(userId);
     }
 
 
     // Get Address By ID
     @GetMapping("/{id}")
-    public Address getAddressById(@PathVariable Long id) {
+    public Address getAddressById(
+            @PathVariable Long id) {
+
         return addressService.getAddressById(id);
     }
 
 
     // Update Address
     @PutMapping("/{id}")
-    public Address updateAddress(@PathVariable Long id,
-                                 @Valid @RequestBody Address address) {
+    public Address updateAddress(
+            @PathVariable Long id,
+            @Valid @RequestBody Address address) {
+
         return addressService.updateAddress(id, address);
     }
 
 
     // Delete Address
     @DeleteMapping("/{id}")
-    public String deleteAddress(@PathVariable Long id) {
+    public String deleteAddress(
+            @PathVariable Long id) {
+
         addressService.deleteAddress(id);
+
         return "Address deleted successfully.";
     }
+
 }

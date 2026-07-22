@@ -33,14 +33,23 @@ public class StoreController {
     }
 
     @PutMapping("/{id}")
-    public Store updateStore(@PathVariable Long id,
-                             @Valid @RequestBody Store store) {
+    public Store updateStore(
+            @PathVariable Long id,
+            @Valid @RequestBody Store store) {
+
         return storeService.updateStore(id, store);
+    }
+
+    @PutMapping("/{id}/approve")
+    public Store approveStore(@PathVariable Long id) {
+        return storeService.approveStore(id);
     }
 
     @DeleteMapping("/{id}")
     public String deleteStore(@PathVariable Long id) {
+
         storeService.deleteStore(id);
+
         return "Store deleted successfully.";
     }
 }
