@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     private CartRepository cartRepository;
 
 
-
+    
     
 
 
@@ -237,7 +237,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    public List<Order> getOrdersByStore(Long storeId) {
 
+        return orderRepository.findByStoreId(storeId);
+
+    }
 
     @Override
     public void deleteOrder(Long id) {

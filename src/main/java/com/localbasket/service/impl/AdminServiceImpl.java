@@ -1,14 +1,12 @@
 package com.localbasket.service.impl;
 
-
-import com.localbasket.entity.Order;
 import java.math.BigDecimal;
 
-import com.localbasket.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.localbasket.dto.DashboardResponseDTO;
+import com.localbasket.entity.Order;
 import com.localbasket.repository.CategoryRepository;
 import com.localbasket.repository.DeliveryRepository;
 import com.localbasket.repository.OrderRepository;
@@ -48,17 +46,11 @@ public class AdminServiceImpl implements AdminService {
         DashboardResponseDTO dto = new DashboardResponseDTO();
 
         dto.setTotalUsers(userRepository.count());
-
         dto.setTotalStores(storeRepository.count());
-
         dto.setTotalProducts(productRepository.count());
-
         dto.setTotalOrders(orderRepository.count());
-
         dto.setTotalCategories(categoryRepository.count());
-
         dto.setTotalPayments(paymentRepository.count());
-
         dto.setTotalDeliveries(deliveryRepository.count());
 
         Double totalRevenue = orderRepository.findAll()
@@ -70,5 +62,4 @@ public class AdminServiceImpl implements AdminService {
 
         return dto;
     }
-
 }

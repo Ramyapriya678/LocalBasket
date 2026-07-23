@@ -19,7 +19,6 @@ import com.localbasket.service.CartService;
 @Service
 public class CartServiceImpl implements CartService {
 
-
     @Autowired
     private CartRepository cartRepository;
 
@@ -32,268 +31,148 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private StoreProductRepository storeProductRepository;
 
-
-
     @Override
     public Cart addToCart(Long userId, Long storeProductId, Integer quantity) {
 
-
-        // Find User
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found with id : " + userId));
 
-
-
-        // Find Store Product
         StoreProduct storeProduct = storeProductRepository.findById(storeProductId)
-                .orElseThrow(() -> new RuntimeException("Store product not found"));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Store product not found with id : " + storeProductId));
 
-
-
-        // Find existing cart
         Cart cart = cartRepository.findByUserId(userId);
 
-
-
-        // Create cart if not exists
         if (cart == null) {
 
             cart = new Cart();
-
             cart.setUser(user);
-
             cart.setCartItems(new ArrayList<>());
-
             cart.setTotalAmount(BigDecimal.ZERO);
 
             cart = cartRepository.save(cart);
         }
 
-
-
-        // Check item already exists
         CartItem item = cartItemRepository
                 .findByCartIdAndStoreProductId(
                         cart.getId(),
-                        storeProductId
-                )
+                        storeProductId)
                 .orElse(null);
-
-
 
         if (item == null) {
 
-
-            // New cart item
             item = new CartItem();
 
             item.setCart(cart);
-
             item.setStoreProduct(storeProduct);
-
             item.setQuantity(quantity);
-
-
-            item.setPrice(
-                    storeProduct.getSellingPrice()
-            );
-
+            item.setPrice(storeProduct.getSellingPrice());
 
             item.setSubtotal(
                     storeProduct.getSellingPrice()
-                    .multiply(BigDecimal.valueOf(quantity))
-            );
-
+                            .multiply(BigDecimal.valueOf(quantity)));
 
             cart.getCartItems().add(item);
 
-
-
         } else {
 
-
-            // Increase quantity
-
-            item.setQuantity(
-                    item.getQuantity() + quantity
-            );
-
+            item.setQuantity(item.getQuantity() + quantity);
 
             item.setSubtotal(
                     item.getPrice()
-                    .multiply(BigDecimal.valueOf(item.getQuantity()))
-            );
-
+                            .multiply(BigDecimal.valueOf(item.getQuantity())));
         }
-
-
 
         cartItemRepository.save(item);
 
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
+        for (CartItem cartItem : cart.getCartItems()) {
 
-        // Calculate Cart Total
-
-        BigDecimal total = BigDecimal.ZERO;
-
-
-        for(CartItem cartItem : cart.getCartItems()) {
-
-            total = total.add(
-                    cartItem.getSubtotal()
-            );
-
+            totalAmount = totalAmount.add(cartItem.getSubtotal());
         }
 
-
-
-        cart.setTotalAmount(total);
-
-
+        cart.setTotalAmount(totalAmount);
 
         return cartRepository.save(cart);
-
     }
-
-
-
 
     @Override
     public Cart getCartByUser(Long userId) {
 
-
         Cart cart = cartRepository.findByUserId(userId);
 
-
-        if(cart == null) {
-
+        if (cart == null) {
 
             User user = userRepository.findById(userId)
-                    .orElseThrow(
-                        () -> new RuntimeException("User not found")
-                    );
-
+                    .orElseThrow(() ->
+                            new RuntimeException("User not found"));
 
             cart = new Cart();
-
             cart.setUser(user);
-
             cart.setCartItems(new ArrayList<>());
-
             cart.setTotalAmount(BigDecimal.ZERO);
 
-
             cart = cartRepository.save(cart);
-
         }
 
-
         return cart;
-
     }
-
-
-
 
     @Override
     public Cart updateCartItem(Long cartItemId, Integer quantity) {
 
-
         CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(
-                        () -> new RuntimeException("Cart item not found")
-                );
-
-
+                .orElseThrow(() ->
+                        new RuntimeException("Cart item not found"));
 
         item.setQuantity(quantity);
 
-
-
         item.setSubtotal(
                 item.getPrice()
-                .multiply(BigDecimal.valueOf(quantity))
-        );
-
-
+                        .multiply(BigDecimal.valueOf(quantity)));
 
         cartItemRepository.save(item);
 
-
-
         Cart cart = item.getCart();
 
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
+        for (CartItem cartItem : cart.getCartItems()) {
 
-        BigDecimal total = BigDecimal.ZERO;
-
-
-
-        for(CartItem cartItem : cart.getCartItems()) {
-
-            total = total.add(
-                    cartItem.getSubtotal()
-            );
-
+            totalAmount = totalAmount.add(cartItem.getSubtotal());
         }
 
-
-
-        cart.setTotalAmount(total);
-
-
+        cart.setTotalAmount(totalAmount);
 
         return cartRepository.save(cart);
-
     }
-
-
-
-
 
     @Override
     public void removeCartItem(Long cartItemId) {
 
-
         CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(
-                        () -> new RuntimeException("Cart item not found")
-                );
-
-
+                .orElseThrow(() ->
+                        new RuntimeException("Cart item not found"));
 
         Cart cart = item.getCart();
 
-
-
         cart.getCartItems().remove(item);
-
-
 
         cartItemRepository.delete(item);
 
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
+        for (CartItem cartItem : cart.getCartItems()) {
 
-        BigDecimal total = BigDecimal.ZERO;
-
-
-
-        for(CartItem cartItem : cart.getCartItems()) {
-
-            total = total.add(
-                    cartItem.getSubtotal()
-            );
-
+            totalAmount = totalAmount.add(cartItem.getSubtotal());
         }
 
-
-
-        cart.setTotalAmount(total);
-
-
+        cart.setTotalAmount(totalAmount);
 
         cartRepository.save(cart);
-
     }
-
 }

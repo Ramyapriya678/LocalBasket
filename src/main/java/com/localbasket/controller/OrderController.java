@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import com.localbasket.entity.Order;
 import com.localbasket.service.OrderService;
 
+
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin("*")
 public class OrderController {
 
 
     @Autowired
     private OrderService orderService;
+
 
 
     // Create Order
@@ -27,25 +30,48 @@ public class OrderController {
     }
 
 
-    // Get all orders
+
+    // Get all orders (Admin)
     @GetMapping
     public List<Order> getAllOrders() {
+
         return orderService.getAllOrders();
+
     }
+
 
 
     // Get order by id
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable Long id) {
+    public Order getOrderById(
+            @PathVariable Long id) {
+
         return orderService.getOrderById(id);
+
     }
 
 
-    // Get orders of user
+
+    // Customer orders
     @GetMapping("/user/{userId}")
-    public List<Order> getOrdersByUser(@PathVariable Long userId) {
+    public List<Order> getOrdersByUser(
+            @PathVariable Long userId) {
+
         return orderService.getOrdersByUser(userId);
+
     }
+
+
+
+    // Store Owner orders
+    @GetMapping("/store/{storeId}")
+    public List<Order> getOrdersByStore(
+            @PathVariable Long storeId) {
+
+        return orderService.getOrdersByStore(storeId);
+
+    }
+
 
 
     // Update order status
@@ -54,16 +80,24 @@ public class OrderController {
             @PathVariable Long id,
             @RequestParam String status) {
 
+
         return orderService.updateOrderStatus(id, status);
+
     }
+
 
 
     // Delete order
     @DeleteMapping("/{id}")
-    public String deleteOrder(@PathVariable Long id) {
+    public String deleteOrder(
+            @PathVariable Long id) {
+
 
         orderService.deleteOrder(id);
 
+
         return "Order deleted successfully";
+
     }
+
 }

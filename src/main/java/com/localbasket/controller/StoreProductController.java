@@ -38,6 +38,14 @@ public class StoreProductController {
 
         return service.getStoreProductsByStore(storeId);
     }
+    
+    @GetMapping("/owner/{ownerId}")
+    public List<StoreProduct> getMyStoreProducts(@PathVariable Long ownerId) {
+
+        return service.getMyStoreProducts(ownerId);
+
+    }
+    
 
     @PutMapping("/{id}")
     public StoreProduct updateStoreProduct(@PathVariable Long id,

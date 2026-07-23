@@ -34,6 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("=================================");
         System.out.println("Request URI: " + request.getRequestURI());
         System.out.println("Authorization Header: " + request.getHeader("Authorization"));
+        System.out.println("JWT FILTER RUNNING : " + request.getRequestURI());
+
+        // Skip JWT check for login and register
+        String path = request.getRequestURI();
+
+        if (path.equals("/api/auth/login") ||
+            path.equals("/api/auth/register")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -67,12 +78,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authToken);
 
-                System.out.println("Authenticated User: "
-                        + SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getName());
+                System.out.println(
+                        "Authenticated User: " +
+                        SecurityContextHolder.getContext()
+                                .getAuthentication()
+                                .getName());
             }
         }
 

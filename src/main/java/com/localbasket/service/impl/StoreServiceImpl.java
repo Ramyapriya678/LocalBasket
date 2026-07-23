@@ -31,6 +31,15 @@ public class StoreServiceImpl implements StoreService {
         return storeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Store not found"));
     }
+    
+    @Override
+    public Store getStoreByOwner(Long ownerId) {
+
+        return storeRepository.findByOwnerId(ownerId)
+                .orElseThrow(() ->
+                        new RuntimeException("Store not found for this owner."));
+
+    }
 
     @Override
     public Store updateStore(Long id, Store store) {

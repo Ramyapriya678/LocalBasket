@@ -6,7 +6,7 @@ import com.localbasket.entity.Address;
 
 public interface AddressService {
 
-    Address addAddress(Address address);
+    Address addAddress(Long userId, Address address);
 
     List<Address> getAddressesByUser(Long userId);
 

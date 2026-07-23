@@ -17,5 +17,7 @@ public interface StoreService {
     Store approveStore(Long id);
 
     void deleteStore(Long id);
+    
+    Store getStoreByOwner(Long ownerId);
 
 }

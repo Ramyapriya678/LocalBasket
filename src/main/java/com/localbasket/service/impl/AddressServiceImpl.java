@@ -2,25 +2,36 @@ package com.localbasket.service.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.localbasket.entity.Address;
+import com.localbasket.entity.User;
 import com.localbasket.repository.AddressRepository;
-import com.localbasket.repository.StoreRepository;
+import com.localbasket.repository.UserRepository;
 import com.localbasket.service.AddressService;
 
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    @Autowired
-    private AddressRepository addressRepository;
-    
-    @Autowired
-    private StoreRepository storeRepository;
+    private final AddressRepository addressRepository;
+    private final UserRepository userRepository;
+
+    public AddressServiceImpl(
+            AddressRepository addressRepository,
+            UserRepository userRepository) {
+
+        this.addressRepository = addressRepository;
+        this.userRepository = userRepository;
+    }
 
     @Override
-    public Address addAddress(Address address) {
+    public Address addAddress(Long userId, Address address) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        address.setUser(user);
+
         return addressRepository.save(address);
     }
 
@@ -28,20 +39,20 @@ public class AddressServiceImpl implements AddressService {
     public List<Address> getAddressesByUser(Long userId) {
 
         return addressRepository.findByUserId(userId);
-
     }
 
     @Override
     public Address getAddressById(Long id) {
+
         return addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found."));
+                .orElseThrow(() -> new RuntimeException("Address not found"));
     }
 
     @Override
     public Address updateAddress(Long id, Address address) {
 
         Address existing = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found."));
+                .orElseThrow(() -> new RuntimeException("Address not found"));
 
         existing.setAddressLine1(address.getAddressLine1());
         existing.setAddressLine2(address.getAddressLine2());
@@ -58,14 +69,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddress(Long id) {
 
-        Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Address not found"));
-
-        if (storeRepository.existsByAddressId(id)) {
-            throw new RuntimeException(
-                    "Cannot delete address because it is assigned to a store.");
-        }
-
-        addressRepository.delete(address);
+        addressRepository.deleteById(id);
     }
 }

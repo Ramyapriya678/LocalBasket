@@ -2,67 +2,72 @@ package com.localbasket.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.localbasket.entity.Address;
 import com.localbasket.service.AddressService;
 
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/api/addresses")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AddressController {
 
-    @Autowired
-    private AddressService addressService;
+    private final AddressService addressService;
 
-
-    // Add Address
-    @PostMapping
-    public Address addAddress(
-            @Valid @RequestBody Address address) {
-
-        return addressService.addAddress(address);
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
     }
 
+    // Add address for user
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<Address> addAddress(
+            @PathVariable Long userId,
+            @RequestBody Address address) {
 
-    // Get Addresses By User
+        return ResponseEntity.ok(
+                addressService.addAddress(userId, address)
+        );
+    }
+
+    // Get addresses by user
     @GetMapping("/user/{userId}")
-    public List<Address> getUserAddresses(
+    public ResponseEntity<List<Address>> getUserAddresses(
             @PathVariable Long userId) {
 
-        return addressService.getAddressesByUser(userId);
+        return ResponseEntity.ok(
+                addressService.getAddressesByUser(userId)
+        );
     }
 
-
-    // Get Address By ID
+    // Get address by id
     @GetMapping("/{id}")
-    public Address getAddressById(
+    public ResponseEntity<Address> getAddress(
             @PathVariable Long id) {
 
-        return addressService.getAddressById(id);
+        return ResponseEntity.ok(
+                addressService.getAddressById(id)
+        );
     }
 
-
-    // Update Address
+    // Update address
     @PutMapping("/{id}")
-    public Address updateAddress(
+    public ResponseEntity<Address> updateAddress(
             @PathVariable Long id,
-            @Valid @RequestBody Address address) {
+            @RequestBody Address address) {
 
-        return addressService.updateAddress(id, address);
+        return ResponseEntity.ok(
+                addressService.updateAddress(id, address)
+        );
     }
 
-
-    // Delete Address
+    // Delete address
     @DeleteMapping("/{id}")
-    public String deleteAddress(
+    public ResponseEntity<String> deleteAddress(
             @PathVariable Long id) {
 
         addressService.deleteAddress(id);
 
-        return "Address deleted successfully.";
+        return ResponseEntity.ok("Address deleted successfully");
     }
-
 }

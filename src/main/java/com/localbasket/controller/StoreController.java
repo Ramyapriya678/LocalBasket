@@ -31,7 +31,12 @@ public class StoreController {
     public Store getStoreById(@PathVariable Long id) {
         return storeService.getStoreById(id);
     }
+    @GetMapping("/owner/{ownerId}")
+    public Store getStoreByOwner(@PathVariable Long ownerId) {
 
+        return storeService.getStoreByOwner(ownerId);
+
+    }
     @PutMapping("/{id}")
     public Store updateStore(
             @PathVariable Long id,

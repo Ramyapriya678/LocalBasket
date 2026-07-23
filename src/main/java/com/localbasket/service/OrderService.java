@@ -4,23 +4,49 @@ import java.util.List;
 
 import com.localbasket.entity.Order;
 
+
 public interface OrderService {
 
-    // Place order from Cart
-    Order placeOrder(Long userId, Long addressId);
 
-    // Get all orders
+    // Place order
+    Order placeOrder(
+            Long userId,
+            Long addressId);
+
+
+
+    // All orders
     List<Order> getAllOrders();
 
-    // Get order by id
-    Order getOrderById(Long id);
 
-    // Get orders by user
-    List<Order> getOrdersByUser(Long userId);
 
-    // Update order status
-    Order updateOrderStatus(Long id, String status);
+    // Order by id
+    Order getOrderById(
+            Long id);
 
-    // Delete order
-    void deleteOrder(Long id);
+
+
+    // Customer orders
+    List<Order> getOrdersByUser(
+            Long userId);
+
+
+
+    // Store owner orders
+    List<Order> getOrdersByStore(
+            Long storeId);
+
+
+
+    // Update status
+    Order updateOrderStatus(
+            Long id,
+            String status);
+
+
+
+    // Delete
+    void deleteOrder(
+            Long id);
+
 }

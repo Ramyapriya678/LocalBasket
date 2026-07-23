@@ -44,7 +44,6 @@ public class OrderDeliveryServiceImpl implements OrderDeliveryService {
         }
 
         OrderDelivery delivery = new OrderDelivery();
-
         delivery.setOrder(order);
         delivery.setDeliveryPartner(partner);
         delivery.setDeliveryStatus(DeliveryStatus.ASSIGNED);

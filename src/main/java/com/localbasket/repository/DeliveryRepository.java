@@ -16,5 +16,4 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     // Find all deliveries assigned to a Delivery Partner
     List<Delivery> findByDeliveryPartnerId(Long deliveryPartnerId);
-
 }
