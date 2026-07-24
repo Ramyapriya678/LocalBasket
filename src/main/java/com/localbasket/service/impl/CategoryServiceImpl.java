@@ -15,6 +15,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
     @Override
     public Category addCategory(Category category) {
 
@@ -29,42 +30,69 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(category);
     }
 
+
     @Override
     public List<Category> getAllCategories() {
+
         return categoryRepository.findAll();
     }
 
+
     @Override
     public Category getCategoryById(Long id) {
+
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> 
+                    new RuntimeException("Category not found.")
+                );
     }
-    
+
+
+    @Override
+    public Category getCategoryByName(String categoryName) {
+
+        return categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> 
+                    new RuntimeException("Category not found.")
+                );
+    }
+
 
     @Override
     public Category updateCategory(Long id, Category category) {
 
         Category existingCategory = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> 
+                    new RuntimeException("Category not found.")
+                );
+
 
         existingCategory.setCategoryName(category.getCategoryName());
         existingCategory.setDescription(category.getDescription());
+
 
         if (category.getImageUrl() != null) {
             existingCategory.setImageUrl(category.getImageUrl());
         }
 
+
         if (category.getStatus() != null) {
             existingCategory.setStatus(category.getStatus());
         }
 
+
         return categoryRepository.save(existingCategory);
     }
+
+
     @Override
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found."));
+                .orElseThrow(() -> 
+                    new RuntimeException("Category not found.")
+                );
+
 
         try {
 
@@ -75,10 +103,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RuntimeException(
                 "Cannot delete category because products are assigned to it."
             );
-
         }
-
     }
-
-   
 }

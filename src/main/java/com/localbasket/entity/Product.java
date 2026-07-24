@@ -1,5 +1,7 @@
 package com.localbasket.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,15 +10,19 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "products")
 public class Product {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
+
     @NotNull(message = "Category is required")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties({"products"})
     private Category category;
+
 
 
     @NotBlank(message = "Product name is required")
@@ -24,15 +30,19 @@ public class Product {
     private String productName;
 
 
+
     private String brand;
+
 
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
 
+
     @Column(name = "image_url")
     private String imageUrl;
+
 
 
     @NotBlank(message = "Unit is required")
@@ -40,11 +50,14 @@ public class Product {
     private String unit;
 
 
+
     private String status = "ACTIVE";
+
 
 
     public Product() {
     }
+
 
 
     public Product(Long id, Category category, String productName,
@@ -62,6 +75,7 @@ public class Product {
     }
 
 
+
     public Long getId() {
         return id;
     }
@@ -70,6 +84,7 @@ public class Product {
     public void setId(Long id) {
         this.id = id;
     }
+
 
 
     public Category getCategory() {
@@ -82,6 +97,7 @@ public class Product {
     }
 
 
+
     public String getProductName() {
         return productName;
     }
@@ -90,6 +106,7 @@ public class Product {
     public void setProductName(String productName) {
         this.productName = productName;
     }
+
 
 
     public String getBrand() {
@@ -102,6 +119,7 @@ public class Product {
     }
 
 
+
     public String getDescription() {
         return description;
     }
@@ -110,6 +128,7 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
+
 
 
     public String getImageUrl() {
@@ -122,6 +141,7 @@ public class Product {
     }
 
 
+
     public String getUnit() {
         return unit;
     }
@@ -130,6 +150,7 @@ public class Product {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
 
 
     public String getStatus() {

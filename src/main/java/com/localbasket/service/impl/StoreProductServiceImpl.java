@@ -1,10 +1,13 @@
 package com.localbasket.service.impl;
 
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.localbasket.dto.AddStoreProductRequest;
 import com.localbasket.entity.Product;
 import com.localbasket.entity.Store;
 import com.localbasket.entity.StoreProduct;
@@ -12,9 +15,12 @@ import com.localbasket.repository.ProductRepository;
 import com.localbasket.repository.StoreProductRepository;
 import com.localbasket.repository.StoreRepository;
 import com.localbasket.service.StoreProductService;
+import com.localbasket.entity.Category;
+import com.localbasket.repository.CategoryRepository;
 
 @Service
 public class StoreProductServiceImpl implements StoreProductService {
+
 
 
     @Autowired
@@ -28,30 +34,48 @@ public class StoreProductServiceImpl implements StoreProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
 
     @Override
-    public StoreProduct save(StoreProduct storeProduct) {
+    public StoreProduct addProductToStore(
+            AddStoreProductRequest request) {
 
 
-        Long storeId = storeProduct.getStore().getId();
-
-        Long productId = storeProduct.getProduct().getId();
-
-
-
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() ->
-                    new RuntimeException("Store not found with id : " + storeId)
+        Store store = storeRepository
+                .findById(request.getStoreId())
+                .orElseThrow(
+                    () -> new RuntimeException("Store not found")
                 );
 
 
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() ->
-                    new RuntimeException("Product not found with id : " + productId)
+        Category category = categoryRepository
+                .findByCategoryName(request.getCategory())
+                .orElseThrow(
+                    () -> new RuntimeException("Category not found")
                 );
 
+
+        Product product = new Product();
+
+        product.setProductName(request.getProductName());
+
+        product.setCategory(category);
+
+        product.setUnit("kg");
+
+        product.setStatus("ACTIVE");
+
+
+        product = productRepository.save(product);
+
+
+
+
+        StoreProduct storeProduct = new StoreProduct();
 
 
         storeProduct.setStore(store);
@@ -60,7 +84,39 @@ public class StoreProductServiceImpl implements StoreProductService {
 
 
 
+        storeProduct.setSellingPrice(
+                BigDecimal.valueOf(request.getPrice())
+        );
+
+
+        storeProduct.setStockQuantity(
+                request.getStock()
+        );
+
+
+        storeProduct.setDiscountPercentage(
+                BigDecimal.ZERO
+        );
+
+
+        storeProduct.setIsAvailable(true);
+
+
+
         return repository.save(storeProduct);
+
+    }
+
+
+
+
+
+
+    @Override
+    public StoreProduct save(StoreProduct storeProduct) {
+
+        return repository.save(storeProduct);
+
     }
 
 
@@ -76,15 +132,22 @@ public class StoreProductServiceImpl implements StoreProductService {
 
 
 
+
+
     @Override
     public StoreProduct getStoreProductById(Long id) {
 
         return repository.findById(id)
                 .orElseThrow(() ->
-                    new RuntimeException("Store Product not found")
+                    new RuntimeException(
+                        "Store Product not found"
+                    )
                 );
 
     }
+
+
+
 
 
 
@@ -98,6 +161,7 @@ public class StoreProductServiceImpl implements StoreProductService {
 
 
 
+
     @Override
     public List<StoreProduct> getMyStoreProducts(Long ownerId) {
 
@@ -107,20 +171,38 @@ public class StoreProductServiceImpl implements StoreProductService {
 
 
 
+
+
     @Override
-    public StoreProduct updateStoreProduct(Long id, StoreProduct storeProduct) {
+    public StoreProduct updateStoreProduct(
+            Long id,
+            StoreProduct storeProduct) {
 
 
-        StoreProduct existing = getStoreProductById(id);
+        StoreProduct existing =
+                getStoreProductById(id);
 
 
-        existing.setSellingPrice(storeProduct.getSellingPrice());
 
-        existing.setStockQuantity(storeProduct.getStockQuantity());
+        existing.setSellingPrice(
+                storeProduct.getSellingPrice()
+        );
 
-        existing.setDiscountPercentage(storeProduct.getDiscountPercentage());
 
-        existing.setIsAvailable(storeProduct.getIsAvailable());
+        existing.setStockQuantity(
+                storeProduct.getStockQuantity()
+        );
+
+
+        existing.setDiscountPercentage(
+                storeProduct.getDiscountPercentage()
+        );
+
+
+        existing.setIsAvailable(
+                storeProduct.getIsAvailable()
+        );
+
 
 
         return repository.save(existing);
@@ -129,12 +211,33 @@ public class StoreProductServiceImpl implements StoreProductService {
 
 
 
+
+
+
     @Override
     public void deleteStoreProduct(Long id) {
-
 
         repository.deleteById(id);
 
     }
+
+
+
+
+
+
+    @Override
+    public boolean existsByStoreAndProduct(
+            Long storeId,
+            Long productId) {
+
+
+        return repository.existsByStoreIdAndProductId(
+                storeId,
+                productId
+        );
+
+    }
+
 
 }

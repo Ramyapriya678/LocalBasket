@@ -12,40 +12,60 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
+
 
     @Autowired
     private ProductService productService;
 
+
+
     // Add Product
     @PostMapping
     public Product addProduct(@Valid @RequestBody Product product) {
+
         return productService.addProduct(product);
     }
+
+
 
     // Get All Products
     @GetMapping
     public List<Product> getAllProducts() {
+
         return productService.getAllProducts();
     }
+
+
 
     // Get Product By ID
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable Long id) {
+
         return productService.getProductById(id);
     }
 
+
+
     // Update Product
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id,
-                                 @Valid @RequestBody Product product) {
+    public Product updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody Product product) {
+
         return productService.updateProduct(id, product);
     }
+
+
 
     // Delete Product
     @DeleteMapping("/{id}")
     public String deleteProduct(@PathVariable Long id) {
+
         productService.deleteProduct(id);
+
         return "Product deleted successfully.";
     }
+
 }

@@ -15,6 +15,9 @@ public interface CategoryService {
     // Get Category By ID
     Category getCategoryById(Long id);
 
+    // Get Category By Name
+    Category getCategoryByName(String categoryName);
+
     // Update Category
     Category updateCategory(Long id, Category category);
 

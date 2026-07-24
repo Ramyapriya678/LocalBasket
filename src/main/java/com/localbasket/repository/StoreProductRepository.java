@@ -15,4 +15,8 @@ public interface StoreProductRepository extends JpaRepository<StoreProduct, Long
     // Get products belonging to a store owner's store
     List<StoreProduct> findByStoreOwnerId(Long ownerId);
 
+    boolean existsByStoreIdAndProductId(
+            Long storeId,
+            Long productId
+    );
 }
